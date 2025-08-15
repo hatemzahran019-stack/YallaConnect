@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Yalla Connect</title>
+
+  <!-- Cairo Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Preload Font Awesome -->
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <!-- Particles.js -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', sans-serif;
+      background-color: #0f0f0f;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      width: 90%;
+      max-width: 420px;
+      padding: 30px 30px;
+      border-radius: 10px;
+      text-align: center;
+      background-color: #0f0f0f;
+      backdrop-filter: blur(16px) saturate(120%);
+      -webkit-backdrop-filter: blur(16px) saturate(120%);
+    }
+
+    /* بداية التعديلات الجديدة */
+    .logo-container {
+        position: relative;
+        width: 180px;
+        height: 180px;
+        margin: 0 auto 30px;
+    }
+
+    .logo {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        z-index: 2;
+        opacity: 0;
+        transform: scale(0.6);
+        filter: blur(8px);
+        animation: logoAppear 0.8s ease-out forwards;
+    }
+
+    @keyframes logoAppear {
+        0% {
+            opacity: 0;
+            transform: scale(0.6);
+            filter: blur(8px);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+            filter: blur(0);
+        }
+    }
+
+    .loader {
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        border: 6px solid transparent;
+        border-top: 6px solid #0047AB;
+        border-bottom: 6px solid #0047AB;
+        animation: spin 1.3s linear infinite, glow 1.5s ease-in-out infinite alternate;
+        z-index: 1;
+    }
+
+    @keyframes glow {
+        0% { box-shadow: 0 0 10px #0047AB; }
+        100% { box-shadow: 0 0 25px #0047AB; }
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg);}
+        100% { transform: rotate(360deg);}
+    }
+    /* نهاية التعديلات الجديدة */
+
+    .input-field {
+      width: 100%;
+      padding: 20px;
+      font-size: 18px;
+      border-radius: 8px;
+      border: 2px solid #444;
+      background-color: #222;
+      color: #fff;
+      text-align: center;
+      transition: 0.3s;
+      direction: ltr;
+      caret-color: #fefefe;
+      box-shadow: inset 0 0 10px rgba(255, 193, 7, 0.1);
+    }
+
+    .input-field::placeholder {
+      color: #bbb;
+      text-align: center;
+      letter-spacing: normal;
+    }
+
+    .input-field:focus {
+      border: 1px solid #00ff8855;
+      outline: none;
+    }
+
+    .btn, .secondary-btn {
+      display: block;
+      width: 100%;
+      margin-top: 15px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 8px;
+      font-family: 'Cairo', sans-serif;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+      outline: none;
+    }
+
+    .btn {
+      background: #0047AB;
+      color: #fff;
+      border: 1px solid #444;
+    }
+
+    .btn:hover,
+    .btn:focus {
+      outline: 1px solid #fff;
+    }
+
+    .secondary-btn {
+      background: #e0aa00;
+      color: #fff;
+      border: 1px solid #444;
+    }
+    
+    .input-field:focus,
+    .input-field:hover {
+      outline:1px solid #fff;
+    }
+    
+    .secondary-btn:hover,
+    .secondary-btn:focus {
+      outline: 1px solid #fff;
+    }
+    
+    .btn:focus,
+    .secondary-btn:focus {
+      outline: 1px solid #e0f0ff;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+.animated-waves {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 90px; /* زيادة الارتفاع */
+    z-index: -1;
+    margin: 0;
+    overflow: hidden;
+    transform: rotate(180deg);
+}
+
+.wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="%230047AB"/></svg>');
+    background-repeat: repeat-x;
+    animation: waveMove 8s linear infinite;
+    
+}
+
+
+
+/* موجة إضافية لمزيد من العمق */
+.wave::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" fill="%230066ff"/></svg>');
+    background-repeat: repeat-x;
+    animation: waveMove 12s linear infinite;
+    opacity: 0.7;
+}
+
+@keyframes waveMove {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); } /* حركة من اليمين لليسار */
+}
+
+    /* تم إزالة .user-icon-wrapper و .loader-ring القديم */
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(0, 71, 171, 0.4); }
+      70% { box-shadow: 0 0 0 20px rgba(0, 71, 171, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 71, 171, 0); }
+    }
+
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+    }
+
+    /* إضافة تأثير آلة كاتبة */
+    .typewriter {
+        font-size: 18px;
+        font-weight: 600;
+        color: #cccccc;
+        text-align: center;
+        max-width: 300px;
+        white-space: normal;
+        line-height: 1.4;
+        min-height: 50px;
+        margin: 0 auto 20px;
+    }
+
+    .cursor {
+        display: inline-block;
+        width: 3px;
+        height: 1.2em;
+        background-color: #0047AB;
+        animation: blink 0.7s steps(2, start) infinite;
+        vertical-align: bottom;
+        margin-left: 2px;
+    }
+
+    @keyframes blink {
+        to { visibility: hidden; }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  
+  <div class="animated-waves">
+    <div class="wave"></div>
+</div>
+
+  <div class="container" role="main" aria-label="تفعيل الحساب">
+    <!-- استبدال أيقونة المستخدم باللودر والشعار الجديد -->
+    <div class="logo-container">
+      <div class="loader"></div>
+      <img src="https://up6.cc/2025/08/175516875548061.png" alt="App Logo" class="logo">
+    </div>
+    
+
+    
+    <form action="/verify" method="post">
+      <input id="codeInput" class="input-field" type="text" name="code" placeholder="Enter activation code" maxlength="12" tabindex="1" aria-label="رمز التفعيل" inputmode="numeric" pattern="[0-9]*" required autofocus />
+      <button id="submitBtn" class="btn" type="submit" tabindex="2">تفعيل الحساب</button>
+    </form>
+
+    <button id="downloadBtn" class="btn secondary-btn" onclick="window.location.href='https://t.me/storm_connect/74'" tabindex="3">
+      تحميل كود التفعيل
+    </button>
+
+    <footer style="border-top:1px solid #555; padding-top:10px; color:#ddd; font-size:12px; text-align:center; margin-top:30px;">
+      الحقوق محفوظة © Yalla Connect 2025
+    </footer>
+  </div>
+
+  <style>
+    #modalOverlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    #modalBox {
+      border-radius: 10px;
+      width: 90%;
+      max-width: 360px;
+      padding: 25px 20px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.3);
+      font-family: 'Cairo', sans-serif;
+      text-align: center;
+    }
+    
+    #modalBox.success {
+      background-color: #000;
+      color: #fff;
+      border: 2px solid #4CAF50;
+    }
+    
+    #modalBox.error {
+      background-color: #000;
+      color: #fff;
+      border: 2px solid #E53935;
+    }
+    
+    #modalDesc {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 20px 0;
+    }
+    
+    #modalButtons {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    
+    #modalConfirmBtn, #modalCancelBtn {
+      width: 120px;
+      padding: 10px 0;
+      font-weight: 700;
+      font-family: 'Cairo', sans-serif;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      transition: background-color 0.3s ease;
+    }
+    
+    #modalConfirmBtn {
+      background-color: #4CAF50;
+      color: #fff;
+    }
+    
+    #modalConfirmBtn:hover {
+      background-color: #4CAF50;
+    }
+    
+    #modalCancelBtn {
+      background-color: #E53935;
+      color: #fff;
+    }
+    
+    #modalCancelBtn:hover {
+      background-color: #E53935;
+    }
+  </style>
+
+  <div id="modalOverlay" style="display:none;">
+    <div id="modalBox" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+      <p id="modalDesc"></p>
+      <div id="modalButtons">
+        <button id="modalConfirmBtn">حسناً</button>
+        <button id="modalCancelBtn">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // تهيئة الجسيمات الخلفية
+    document.addEventListener('DOMContentLoaded', function() {
+      particlesJS('particles-js', {
+        "particles": {
+          "number": {
+            "value": 80,
+            "density": {
+              "enable": true,
+              "value_area": 800
+            }
+          },
+          "color": {
+            "value": "#0047AB"
+          },
+          "shape": {
+            "type": "circle",
+            "stroke": {
+              "width": 0,
+              "color": "#000000"
+            }
+          },
+          "opacity": {
+            "value": 0.3,
+            "random": true,
+            "anim": {
+              "enable": true,
+              "speed": 1,
+              "opacity_min": 0.1,
+              "sync": false
+            }
+          },
+          "size": {
+            "value": 3,
+            "random": true
+          },
+          "line_linked": {
+            "enable": true,
+            "distance": 150,
+            "color": "#0047AB",
+            "opacity": 0.2,
+            "width": 1
+          },
+          "move": {
+            "enable": true,
+            "speed": 2,
+            "direction": "none",
+            "random": true,
+            "straight": false,
+            "out_mode": "out",
+            "bounce": false
+          }
+        },
+        "interactivity": {
+          "detect_on": "canvas",
+          "events": {
+            "onhover": {
+              "enable": true,
+              "mode": "grab"
+            },
+            "onclick": {
+              "enable": true,
+              "mode": "push"
+            },
+            "resize": true
+          },
+          "modes": {
+            "grab": {
+              "distance": 140,
+              "line_linked": {
+                "opacity": 0.5
+              }
+            },
+            "push": {
+              "particles_nb": 4
+            }
+          }
+        },
+        "retina_detect": true
+      });
+
+      
+
+    let removeTrapFocusListener = null;
+
+    function trapFocus(element) {
+      const focusableSelectors = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]';
+      const focusableElements = element.querySelectorAll(focusableSelectors);
+      if (focusableElements.length === 0) return;
+
+      const firstFocusable = focusableElements[0];
+      const lastFocusable = focusableElements[focusableElements.length - 1];
+
+      function handleFocus(event) {
+        if (event.key === 'Tab') {
+          if (event.shiftKey) {
+            if (document.activeElement === firstFocusable) {
+              event.preventDefault();
+              lastFocusable.focus();
+            }
+          } else {
+            if (document.activeElement === lastFocusable) {
+              event.preventDefault();
+              firstFocusable.focus();
+            }
+          }
+        }
+      }
+
+      element.addEventListener('keydown', handleFocus);
+
+      return () => {
+        element.removeEventListener('keydown', handleFocus);
+      };
+    }
+
+    function showModal(message, onConfirm, onCancel, showCancel = true, type = 'success') {
+      const overlay = document.getElementById('modalOverlay');
+      const modalBox = document.getElementById('modalBox');
+      const modalMsg = document.getElementById('modalDesc');
+      const confirmBtn = document.getElementById('modalConfirmBtn');
+      const cancelBtn = document.getElementById('modalCancelBtn');
+      const buttonsContainer = document.getElementById('modalButtons');
+
+      modalMsg.textContent = message;
+      overlay.style.display = 'flex';
+
+      modalBox.classList.remove('success', 'error');
+
+      if (type === 'success') {
+        modalBox.classList.add('success');
+        confirmBtn.style.display = 'inline-block';
+        cancelBtn.style.display = 'none';
+        buttonsContainer.style.justifyContent = 'center';
+      } else if (type === 'error') {
+        modalBox.classList.add('error');
+        confirmBtn.style.display = 'none';
+        cancelBtn.style.display = 'inline-block';
+        buttonsContainer.style.justifyContent = 'center';
+      }
+
+      if (removeTrapFocusListener) removeTrapFocusListener();
+      removeTrapFocusListener = trapFocus(modalBox);
+
+      if (type === 'success') {
+        confirmBtn.focus();
+      } else if (type === 'error') {
+        cancelBtn.focus();
+      }
+
+      confirmBtn.onclick = () => {
+        overlay.style.display = 'none';
+        if (removeTrapFocusListener) removeTrapFocusListener();
+        if (typeof onConfirm === 'function') onConfirm();
+      };
+
+      cancelBtn.onclick = () => {
+        overlay.style.display = 'none';
+        if (removeTrapFocusListener) removeTrapFocusListener();
+        if (typeof onCancel === 'function') onCancel();
+      };
+    }
+
+    document.getElementById('modalBox').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const activeElement = document.activeElement;
+        if (activeElement === document.getElementById('modalConfirmBtn') ||
+            activeElement === document.getElementById('modalCancelBtn')) {
+          activeElement.click();
+          e.preventDefault();
+        }
+      }
+    });
+
+    const validCode = "123456789";
+
+    function saveActivation() {
+      localStorage.setItem('activated', 'true');
+      localStorage.setItem('validCode', validCode);
+    }
+
+    function isActivated() {
+      return localStorage.getItem('activated') === 'true' &&
+             localStorage.getItem('validCode') === validCode;
+    }
+
+    window.onload = () => {
+      const savedCode = localStorage.getItem('validCode');
+      if (savedCode !== validCode) {
+        localStorage.removeItem('activated');
+        localStorage.setItem('validCode', validCode);
+      }
+      if (isActivated()) {
+        window.location.href = 'go:home';
+      }
+      focusElement(currentFocusIndex);
+    };
+
+    document.querySelector('form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const codeInput = this.code;
+      const inputCode = codeInput.value.trim();
+      
+      codeInput.blur();
+
+      if (isActivated()) {
+        window.location.href = 'go:home';
+        return;
+      }
+
+      if (inputCode === validCode) {
+        saveActivation();
+        showModal('تم تفعيل حسابك بنجاح', () => {
+          window.location.href = 'go:home';
+        }, null, false, 'success');
+      } else {
+        showModal('كود التفعيل غير صحيح ، يرجى إعادة المحاولة مرة أخرى', null, () => {
+          codeInput.value = '';
+          codeInput.focus();
+        }, true, 'error');
+      }
+    });
+
+    const focusableElements = ['codeInput', 'submitBtn', 'downloadBtn'];
+    let currentFocusIndex = 0;
+
+    function focusElement(index) {
+      const el = document.getElementById(focusableElements[index]);
+      if (el) el.focus();
+    }
+
+    document.addEventListener('keydown', function (e) {
+      const key = e.key;
+
+      if (key === 'ArrowDown') {
+        currentFocusIndex = (currentFocusIndex + 1) % focusableElements.length;
+        focusElement(currentFocusIndex);
+        e.preventDefault();
+      } else if (key === 'ArrowUp') {
+        currentFocusIndex = (currentFocusIndex - 1 + focusableElements.length) % focusableElements.length;
+        focusElement(currentFocusIndex);
+        e.preventDefault();
+      } else if (key === 'Enter') {
+        const activeElement = document.activeElement;
+        if (activeElement && activeElement.id === 'submitBtn') {
+          activeElement.click();
+          e.preventDefault();
+        }
+      }
+    });
+
+    const inputField = document.getElementById('codeInput');
+    const originalPlaceholder = inputField.placeholder;
+
+    inputField.addEventListener('focus', () => {
+      inputField.placeholder = '';
+    });
+
+    inputField.addEventListener('blur', () => {
+      if (inputField.value.trim() === '') {
+        inputField.placeholder = originalPlaceholder;
+      }
+    });
+  </script>
+</body>
+</html>
