@@ -1703,6 +1703,75 @@ document.querySelectorAll('.card-image').forEach(img => {
     this.src = 'placeholder-image.jpg';
   };
 });
+
+// استبدال دالة التحديث الحالية بهذه الدالة المحسنة
+function refreshPage(hardRefresh = false) {
+  // إضافة مؤشر تحميل
+  const loadingIndicator = document.createElement('div');
+  loadingIndicator.style.position = 'fixed';
+  loadingIndicator.style.top = '0';
+  loadingIndicator.style.left = '0';
+  loadingIndicator.style.width = '100%';
+  loadingIndicator.style.height = '3px';
+  loadingIndicator.style.backgroundColor = 'var(--primary)';
+  loadingIndicator.style.zIndex = '9999';
+  loadingIndicator.style.animation = 'loading 2s infinite';
+  
+  document.body.appendChild(loadingIndicator);
+  
+  // إضافة أنيميشن للتحميل
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes loading {
+      0% { width: 0%; left: 0; right: auto; }
+      50% { width: 100%; left: 0; right: auto; }
+      51% { left: auto; right: 0; }
+      100% { width: 0%; left: auto; right: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+  
+  // إجراء التحديث بعد تأخير بسيط لرؤية المؤشر
+  setTimeout(() => {
+    if (hardRefresh) {
+      // تحديث قوي مع إعادة جلب البيانات من الخادم
+      window.location.reload(true);
+    } else {
+      // تحديث عادي مع إعادة تحميل الصفحة
+      window.location.reload();
+    }
+    
+    // إزالة المؤشر بعد التحديث (على الرغم من أن الصفحة ستتحدى)
+    loadingIndicator.remove();
+    style.remove();
+  }, 800);
+}
+
+// تعديل معالجات الأحداث للأزرار
+refreshBtn.addEventListener('click', function() {
+  const icon = this.querySelector('i');
+  icon.classList.add('refresh-spin');
+  setTimeout(() => {
+    refreshPage(true); // تحديث قوي
+  }, 500);
+});
+
+refreshAllBtn.addEventListener('click', function() {
+  const icon = this.querySelector('i');
+  icon.classList.add('refresh-spin');
+  setTimeout(() => {
+    refreshPage(true); // تحديث قوي
+  }, 500);
+});
+
+// إضافة هذا الكود لإزالة كلاس الـ spin بعد الانتهاء
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.fa-sync-alt').forEach(icon => {
+    icon.addEventListener('animationend', function() {
+      this.classList.remove('refresh-spin');
+    });
+  });
+});
 </script>
 </body>
 </html>
