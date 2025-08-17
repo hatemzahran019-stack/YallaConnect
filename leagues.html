@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Yalla ConnectYalla Connect</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap');
+  
+header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background-color: #0047AB;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  margin-bottom: 5px;
+  font-family: 'Cairo', sans-serif;
+}
+header i { font-size: 20px; cursor: pointer; }
+header h1 { margin: 0; font-size: 20px; 
+font-family: 'Montserrat', sans-serif; }
+.header-buttons { background: none;
+      border: none;
+      color: var(--light);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(255, 255, 255, 0.15); }
+.header-buttons a { color: white; font-size: 22px; text-decoration: none; transition: color 0.3s; }
+.header-buttons a:hover { color: #cfd8dc; }
+
+  :root {
+    --bg-dark: #0f0f0f;
+    --bg-dark-light: #1c1c1c;
+    --text-light: #eeeeee;
+    --accent-red-dark: #7a1c1c; /* للاستخدام بسيط فقط */
+    --border-light: rgba(255, 255, 255, 0.12); /* أبيض خفيف */
+    --fade-duration: 0.3s;
+  }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: #0f0f0f;
+    color: var(--text-light);
+    margin: 0;
+      
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* شبكة الدوريات */
+  .leagues-grid {
+    max-width: 900px;
+    margin: 0 auto 40px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 15px;
+  }
+
+  /* كارت الدوري */
+  .league-card {
+    background-color: #272727;
+    border: 2px solid var(--border-light);
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 16px 26px;
+    max-width: 100%;
+    box-sizing: border-box;
+    transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+    outline-offset: 3px;
+  }
+  .league-card:hover,
+  .league-card:focus {
+    background-color: #3a3a3a;
+    border-color: #0047AB;
+    outline: none;
+  }
+  
+  .league-card.focused {
+    background-color: #3a3a3a;
+    border-color: #0047AB;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 71, 171, 0.3);
+  }
+
+  .league-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  .league-title {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--text-light);
+    word-break: break-word;
+    max-width: calc(100% - 120px);
+    white-space: normal;
+  }
+
+  /* حاوية الترتيب */
+  .standings-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: var(--bg-dark-light);
+      
+    padding: 28px 32px;
+    display: none;
+    color: var(--text-light);
+    opacity: 0;
+    transition: opacity var(--fade-duration) ease;
+      
+  }
+  .standings-container.visible {
+    display: block;
+    opacity: 1;
+  }
+
+  .group-name {
+    font-weight: 700;
+    margin: 22px 0 14px 0;
+    font-size: 1.3rem;
+    color: #fff;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+    margin-bottom: 26px;
+    border-radius: 12px;
+    border: 2px solid var(--border-light);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text-light);
+  }
+
+  th, td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-light);
+    text-align: center;
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+
+  th {
+    background-color: #333333;
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  td.team-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-align: left;
+  }
+
+  td.team-info img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-light);
+  }
+
+  td.team-info span {
+    font-weight: 700;
+  }
+
+  /* زر العودة */
+  .back-btn {
+    background: linear-gradient(135deg, #222, #444, #222);
+    color: white;
+    border: none;
+    padding: 14px 26px;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-bottom: 0px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    transition: background-color 0.3s ease;
+  }
+  .back-btn:hover,
+  .back-btn:focus {
+    background-color: #a02b2b;
+    outline: none;
+    
+  }
+  .back-btn.focused {
+    background-color: #a02b2b;
+    transform: scale(1.02);
+    border: 1px solid #0047AB;
+    
+    
+  }
+
+  /* تحميل الرسالة في منتصف الصفحة */
+  #loadingMsg {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 9999;
+  }
+  .spinner {
+    border: 5px solid rgba(255, 255, 255, 0.12);
+    border-top: 5px solid #bbb;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* رسالة لا توجد نتائج */
+  #noResultsMsg {
+    max-width: 900px;
+    margin: 30px auto;
+    color: #bbb;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  /* زر الصعود لأعلى */
+  .scroll-to-top {
+    position: fixed;
+    bottom: 30px;
+    left: 30px; /* تغيير الاتجاه من right إلى left */
+    background-color: #0047AB;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+  }
+  .scroll-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+  .scroll-to-top:hover {
+    background-color: #003380;
+  }
+  .scroll-to-top.focused {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 71, 171, 0.5);
+  }
+
+  @media (max-width: 650px) {
+    .league-card {
+      gap: 14px;
+      padding: 14px 20px;
+    }
+    .league-logo {
+      width: 64px;
+      height: 64px;
+    }
+    .league-title {
+      font-size: 1rem;
+      max-width: calc(100% - 100px);
+    }
+    .standings-container {
+      padding: 22px 20px;
+    }
+    th, td {
+      font-size: 0.9rem;
+      padding: 10px 12px;
+    }
+    td.team-info img {
+      width: 28px;
+      height: 28px;
+    }
+    .scroll-to-top {
+      left: 15px;
+      bottom: 15px;
+      width: 40px;
+      height: 40px;
+      font-size: 16px;
+    }
+  }
+    
+  /* شاشة التحميل */
+.pure-loader {
+  width: 60px;
+  height: 60px;
+  border: 6px solid #444;
+  border-top: 6px solid #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+#splashScreen { background: linear-gradient(135deg, #000000, #001a11); }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.rotate { animation: spin 0.6s linear; }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-buttons">
+    <span id="refreshIcon" class="refresh-icon"><i class="fa fa-refresh"></i></span>
+  </div>
+  <h1>Yalla Connect</h1>
+  <div class="header-buttons">
+  <a href="javascript:void(0)" onclick="goBack()"><i class="fas fa-arrow-left"></i></a>
+</div>
+</header>
+<div
+  class="leagues-grid"
+  id="leaguesGrid"
+  role="list"
+  aria-label="قائمة الدوريات"
+></div>
+<div
+  class="standings-container"
+  id="standingsContainer"
+  role="region"
+  aria-live="polite"
+  aria-label="ترتيب الدوري"
+>
+  <button
+    class="back-btn"
+    id="backBtn"
+    aria-label="العودة إلى قائمة الدوريات"
+  >
+    العودة للدوريات
+  </button>
+  <div id="standingsContent"></div>
+</div>
+<div
+  id="loadingMsg"
+  aria-live="assertive"
+  aria-busy="true"
+>
+  <div class="spinner" role="status" aria-label="جارٍ تحميل البيانات"></div>
+</div>
+<div id="noResultsMsg" style="display:none;">لم يتم العثور على دوريات.</div>
+
+<!-- زر الصعود لأعلى -->
+<div class="scroll-to-top" id="scrollToTop" aria-label="الصعود لأعلى">
+  <i class="fas fa-arrow-up"></i>
+</div>
+
+<script>
+  const leaguesGrid = document.getElementById('leaguesGrid');
+  const standingsContainer = document.getElementById('standingsContainer');
+  const standingsContent = document.getElementById('standingsContent');
+  const backBtn = document.getElementById('backBtn');
+  const loadingMsg = document.getElementById('loadingMsg');
+  const noResultsMsg = document.getElementById('noResultsMsg');
+  const scrollToTop = document.getElementById('scrollToTop');
+
+  let allLeagues = [];
+  let currentFocusedElement = null;
+  let isInStandingsView = false;
+  let lastFocusedCardIndex = 0; // لتخزين آخر بطاقة تم التركيز عليها
+
+  // إدارة التركيز للعناصر
+  function manageFocus() {
+    const focusableElements = document.querySelectorAll('.league-card, .back-btn, .scroll-to-top');
+    
+    focusableElements.forEach(element => {
+      element.addEventListener('focus', () => {
+        if (currentFocusedElement) {
+          currentFocusedElement.classList.remove('focused');
+        }
+        element.classList.add('focused');
+        currentFocusedElement = element;
+        
+        // إذا كان العنصر هو زر الصعود لأعلى، نجعله مرئيًا
+        if (element === scrollToTop) {
+          scrollToTop.classList.add('visible');
+        }
+      });
+      
+      element.addEventListener('blur', () => {
+        element.classList.remove('focused');
+      });
+    });
+  }
+
+  // التحقق من ظهور زر الصعود لأعلى
+  function checkScroll() {
+    if (window.scrollY > 300) {
+      scrollToTop.classList.add('visible');
+    } else {
+      scrollToTop.classList.remove('visible');
+    }
+  }
+
+  // الصعود لأعلى عند النقر على الزر
+  scrollToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // إضافة مستمع لحدث التمرير
+  window.addEventListener('scroll', checkScroll);
+
+  async function fetchLeagues() {
+    try {
+      const proxyUrl = 'https://corsproxy.io/?';
+      const apiUrl = 'https://ko.best-goal.live/get.php';
+      const res = await fetch(proxyUrl + encodeURIComponent(apiUrl));
+      const json = await res.json();
+      if (json.success) {
+        return json.data;
+      } else {
+        throw new Error('فشل تحميل البيانات');
+      }
+    } catch (error) {
+      alert('حدث خطأ أثناء تحميل البيانات: ' + error.message);
+      return [];
+    }
+  }
+
+  function renderLeagues(leagues) {
+    leaguesGrid.innerHTML = '';
+    if (leagues.length === 0) {
+      noResultsMsg.style.display = 'block';
+      leaguesGrid.style.display = 'none';
+      return;
+    } else {
+      noResultsMsg.style.display = 'none';
+      leaguesGrid.style.display = 'flex';
+    }
+    leagues.forEach((league, index) => {
+      const card = document.createElement('div');
+      card.className = 'league-card';
+      card.tabIndex = 0;
+      card.setAttribute('role', 'listitem');
+      card.dataset.index = index; // إضافة فهرس لكل بطاقة
+      card.innerHTML = `
+        <img class="league-logo" src="${league.image}" alt="شعار ${league.title}" />
+        <div class="league-title" title="${league.title}">
+          ${league.title}
+        </div>
+      `;
+      card.addEventListener('click', () => showStandings(league, index));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          showStandings(league, index);
+        }
+      });
+      leaguesGrid.appendChild(card);
+    });
+    
+    // التركيز على البطاقة المحفوظة أو أول بطاقة إذا لم يكن هناك حفظ
+    const cards = document.querySelectorAll('.league-card');
+    const cardToFocus = lastFocusedCardIndex < cards.length ? 
+      cards[lastFocusedCardIndex] : cards[0];
+    
+    if (cardToFocus) {
+      cardToFocus.focus();
+      cardToFocus.classList.add('focused');
+      currentFocusedElement = cardToFocus;
+    }
+    
+    // إدارة التركيز بعد التحميل
+    manageFocus();
+  }
+
+  function showStandings(league, cardIndex) {
+    standingsContent.innerHTML = '';
+    isInStandingsView = true;
+    lastFocusedCardIndex = cardIndex; // حفظ الفهرس للبطاقة الحالية
+
+    league.standings.forEach((group) => {
+      const groupTitle = document.createElement('div');
+      groupTitle.className = 'group-name';
+      groupTitle.textContent = group.group_name;
+      standingsContent.appendChild(groupTitle);
+
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      thead.innerHTML = `
+        <tr>
+          <th>الفريق</th>
+          <th>لعب</th>
+          <th>فوز</th>
+          <th>تعادل</th>
+          <th>خسارة</th>
+          <th>الأهداف</th>
+          <th>الفرق</th>
+          <th>النقاط</th>
+        </tr>
+      `;
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+
+      const filteredTeams = group.teams.filter((team) => {
+        const nameValid =
+          team.name && team.name.trim().toLowerCase() !== 'n/a';
+        const logoValid = team.logo && team.logo.trim() !== '';
+        return nameValid && logoValid;
+      });
+
+      filteredTeams.forEach((team) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="team-info">
+            <img src="${team.logo}" alt="${team.name}" />
+            <span>${team.name}</span>
+          </td>
+          <td>${team.played}</td>
+          <td>${team.win}</td>
+          <td>${team.draw}</td>
+          <td>${team.lose}</td>
+          <td>${team.goals}</td>
+          <td>${team.diff}</td>
+          <td>${team.points}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'table-wrapper';
+      wrapper.appendChild(table);
+      standingsContent.appendChild(wrapper);
+    });
+
+    leaguesGrid.style.display = 'none';
+    standingsContainer.classList.add('visible');
+    loadingMsg.style.display = 'none';
+    
+    // التركيز على زر العودة عند الدخول للتفاصيل
+    setTimeout(() => {
+      backBtn.focus();
+      backBtn.classList.add('focused');
+      currentFocusedElement = backBtn;
+    }, 100);
+  }
+
+  backBtn.addEventListener('click', () => {
+    standingsContainer.classList.remove('visible');
+    leaguesGrid.style.display = 'flex';
+    loadingMsg.style.display = 'none';
+    isInStandingsView = false;
+    
+    // التركيز على البطاقة المحفوظة عند العودة
+    setTimeout(() => {
+      const cards = document.querySelectorAll('.league-card');
+      if (cards.length > 0) {
+        const cardToFocus = lastFocusedCardIndex < cards.length ? 
+          cards[lastFocusedCardIndex] : cards[0];
+        
+        if (cardToFocus) {
+          cardToFocus.focus();
+          cardToFocus.classList.add('focused');
+          currentFocusedElement = cardToFocus;
+        }
+      }
+    }, 100);
+  });
+
+  // إدارة التنقل باستخدام لوحة المفاتيح
+  document.addEventListener('keydown', (e) => {
+    if (isInStandingsView) return;
+    
+    const focusedElement = document.activeElement;
+    if (!focusedElement || !focusedElement.classList.contains('league-card')) return;
+    
+    const cards = Array.from(document.querySelectorAll('.league-card'));
+    const currentIndex = cards.indexOf(focusedElement);
+    
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (currentIndex < cards.length - 1) {
+        cards[currentIndex + 1].focus();
+        cards[currentIndex + 1].classList.add('focused');
+        focusedElement.classList.remove('focused');
+      } else {
+        // عند الوصول لآخر عنصر، نظهر زر الصعود لأعلى
+        scrollToTop.classList.add('visible');
+        scrollToTop.focus();
+        scrollToTop.classList.add('focused');
+        focusedElement.classList.remove('focused');
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (currentIndex > 0) {
+        cards[currentIndex - 1].focus();
+        cards[currentIndex - 1].classList.add('focused');
+        focusedElement.classList.remove('focused');
+      }
+    }
+  });
+
+  loadingMsg.style.display = 'block';
+  leaguesGrid.style.display = 'none';
+  fetchLeagues().then((leagues) => {
+    allLeagues = leagues;
+    loadingMsg.style.display = 'none';
+    leaguesGrid.style.display = 'flex';
+    renderLeagues(leagues);
+  });
+</script>
+
+<script>
+document.getElementById("refreshIcon").addEventListener("click", async function() {
+const icon = this.querySelector("i");
+icon.classList.add("rotate");
+
+try {
+// إذا كنا في صفحة الترتيب (standings)
+if (standingsContainer.classList.contains('visible')) {
+// نبحث عن الدوري الحالي المفتوح
+const currentLeagueTitle = document.querySelector('.league-title')?.textContent;
+const currentLeague = allLeagues.find(l => l.title === currentLeagueTitle);
+
+if (currentLeague) {  
+    // نحدث فقط بيانات هذا الدوري  
+    const leagues = await fetchLeagues();  
+    const updatedLeague = leagues.find(l => l.title === currentLeagueTitle);  
+      
+    if (updatedLeague) {  
+      // نحدث البيانات المحلية  
+      allLeagues = allLeagues.map(l =>   
+        l.title === currentLeagueTitle ? updatedLeague : l  
+      );  
+        
+      // نعيد عرض الترتيب المحدث  
+      showStandings(updatedLeague, lastFocusedCardIndex);  
+    }  
+  }  
+} else {  
+  // إذا كنا في صفحة الدوريات الرئيسية  
+  const leagues = await fetchLeagues();  
+  allLeagues = leagues;  
+  renderLeagues(leagues);  
+}
+
+} catch (error) {
+console.error('Error refreshing:', error);
+alert('حدث خطأ أثناء تحديث البيانات');
+} finally {
+setTimeout(() => {
+icon.classList.remove("rotate");
+}, 600);
+}
+});
+</script>
+
+<script>
+  function goBack() {
+    if (document.referrer !== "") {
+      window.history.back();
+    } else {
+      window.location.href = "go:services"; // هنا غير الرابط اللي عايزه كـ fallback
+    }
+  }
+</script>
+
+</body>
+</html>
