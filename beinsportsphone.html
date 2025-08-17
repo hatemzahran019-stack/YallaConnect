@@ -723,16 +723,9 @@
     });
   });
   
-  // Back Button Functionality - التوجيه لصفحة معينة
-const backBtn = document.getElementById('backBtn');
+  const backBtn = document.getElementById('backBtn');
 backBtn.addEventListener('click', () => {
-  // إذا كان هناك صفحة سابقة في السجل، ارجع لها
-  if (history.length > 1) {
-    history.back();
-  } else {
-    // إذا لم يكن هناك صفحة سابقة، انتقل للصفحة الرئيسية
-    window.location.href = "go:phone";
-  }
+    history.back(); // يعود للصفحة السابقة مباشرة دون شروط
 });
 </script>
 </body>
