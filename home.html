@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختر واجهتك المفضلة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --dark-bg: #0f0f0f;
+            --dark-secondary: #1a1a1a;
+            --primary-blue: #0066ff;
+            --secondary-blue: #0099ff;
+            --accent-color: #00ccff;
+            --text-color: #f5f5f5;
+            --text-secondary: #b3b3b3;
+            --card-shadow: 0 4px 6px rgba(0, 102, 255, 0.1);
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            --focus-shadow: 0 0 0 3px rgba(0, 204, 255, 0.5);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            background-image: radial-gradient(circle at 10% 20%, rgba(0, 102, 255, 0.1) 0%, transparent 20%);
+            color: var(--text-color);
+            font-family: 'Tajawal', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 30px;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+            background: #fff;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            padding-bottom: 10px;
+        }
+        
+        .header h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-color));
+            border-radius: 2px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 15px auto 0;
+            line-height: 1.7;
+            position: relative;
+            padding: 0 20px;
+        }
+        
+        .header p::before,
+        .header p::after {
+            content: "•";
+            position: absolute;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .header p::before {
+            right: 0;
+        }
+        
+        .header p::after {
+            left: 0;
+        }
+        
+        .cards-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 25px;
+            max-width: 1000px;
+            margin: 0 auto;
+            perspective: 1000px;
+        }
+        
+        .device-card {
+            background: linear-gradient(145deg, var(--dark-secondary), #272727);
+            border-radius: 15px;
+            width: 350px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            border: 2px solid #333;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        
+        .device-card:focus, 
+        .device-card:focus-within {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(0, 204, 255, 0.3);
+            transform: translateY(-5px);
+            outline: none;
+        }
+        
+        .device-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0, 102, 255, 0.1) 0%, transparent 70%);
+            transform: rotate(45deg);
+            transition: var(--transition);
+            opacity: 0;
+        }
+        
+        .device-card:hover, 
+        .device-card:focus {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 102, 255, 0.2);
+            border-color: var(--accent-color);
+        }
+        
+        .device-card:hover::before {
+            opacity: 1;
+            right: -30%;
+            top: -30%;
+        }
+        
+        .card-title {
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-color);
+        }
+        
+        .title-icon {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            background: rgba(0, 204, 255, 0.1);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .device-card:hover .title-icon,
+        .device-card:focus .title-icon {
+            background: rgba(0, 204, 255, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .card-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            right: 0;
+            width: 100%;
+            height: 2px;
+            background: #666;
+            transition: var(--transition);
+        }
+        
+        .device-card:hover .card-title::after,
+        .device-card:focus .card-title::after {
+            width: 100%;
+            background: var(--accent-color);
+        }
+        
+        .features-container {
+            margin-bottom: 15px;
+            transition: var(--transition);
+        }
+        
+        .features-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        
+        .features-list li {
+            position: relative;
+            padding: 12px 15px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background: #333;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-blue);
+            border-left-color: #666;
+        }
+        
+        .device-card:hover .features-list li,
+        .device-card:focus .features-list li {
+            color: var(--text-color);
+            background: rgba(50, 50, 50, 0.7);
+            border-left-color: var(--accent-color);
+        }
+        
+        .feature-name {
+            font-weight: 700;
+            color: var(--accent-color);
+            display: block;
+            margin-bottom: 3px;
+            transition: var(--transition);
+        }
+        
+        .feature-desc {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+        
+        .device-card:hover .feature-name,
+        .device-card:focus .feature-name {
+            color: var(--accent-color);
+        }
+        
+        /* مؤشر التركيز للريموت */
+        .focus-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 0px solid transparent;
+            border-radius: 15px;
+            pointer-events: none;
+            transition: var(--transition);
+            z-index: 1;
+        }
+        
+        .device-card:focus .focus-indicator,
+        .device-card:focus-within .focus-indicator {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
+        }
+        
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-blue), var(--accent-color));
+            filter: blur(30px);
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-40px) rotate(180deg);
+            }
+            100% {
+                transform: translateY(0) rotate(360deg);
+            }
+        }
+        
+        /* تلميحات للتحكم عن بعد */
+        .remote-hint {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .remote-hint i {
+            color: var(--accent-color);
+            margin: 0 5px;
+        }
+        
+        @media (max-width: 1200px) {
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                margin-bottom: 30px;
+                padding-top: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .header p::before,
+            .header p::after {
+                display: none;
+            }
+            
+            .device-card {
+                width: 100%;
+                max-width: 380px;
+                padding: 20px;
+            }
+            
+            .card-title {
+                font-size: 1.4rem;
+            }
+            
+            .title-icon {
+                width: 38px;
+                height: 38px;
+                font-size: 1rem;
+            }
+            
+            .features-list li {
+                font-size: 0.85rem;
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape" style="width: 250px; height: 250px; top: 10%; right: 5%; animation-duration: 20s;"></div>
+        <div class="shape" style="width: 180px; height: 180px; bottom: 15%; left: 10%; animation-duration: 25s;"></div>
+    </div>
+    
+    <div class="header">
+        <h1>اختر واجهتك المفضلة</h1>
+        <p>نقدم تجربة مستخدم مخصصة لكل نوع جهاز لضمان أفضل أداء وسهولة استخدام</p>
+    </div>
+    
+    <div class="cards-container">
+        <!-- بطاقة الهواتف -->
+        <div class="device-card" tabindex="0" data-href="go:phone">
+            <div class="focus-indicator"></div>
+            <h2 class="card-title">
+                <span class="title-icon">
+                    <i class="fas fa-mobile-screen-button"></i>
+                </span>
+                واجهة الهواتف
+            </h2>
+            <div class="features-container">
+                <ul class="features-list">
+                    <li>
+                        <span class="feature-name">تصميم متجاوب</span>
+                        <span class="feature-desc">يعمل على جميع أحجام الشاشات</span>
+                    </li>
+                    <li>
+                        <span class="feature-name">الباقات الرياضية والترفيهية</span>
+                        <span class="feature-desc">جميع المحتويات في مكان واحد</span>
+                    </li>
+                    <li>
+                        <span class="feature-name">الأخبار الرياضية</span>
+                        <span class="feature-desc">محدثة لحظياً</span>
+                    </li>
+                    <li>
+                        <span class="feature-name">جدول المباريات</span>
+                        <span class="feature-desc">تفاعلي مع تنبيهات المباريات</span>
+                    </li>
+                    <li>
+                        <span class="feature-name">مكتبة الأفلام والمسلسلات</span>
+                        <span class="feature-desc">بجودة عالية</span>
+                    </li>
+                    <li>
+                        <span class="feature-name">ملخصات المباريات</span>
+                        <span class="feature-desc">مع إمكانية التحميل</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- بطاقة شاشات TV -->
+        <div class="device-card" tabindex="0" data-href="go:tvbox">
+            <div class="focus-indicator"></div>
+            <h2 class="card-title">
+                <span class="title-icon">
+                    <i class="fas fa-tv"></i>
+                </span>
+                واجهة الشاشات الذكية
+            </h2>
+            <div class="features-container">
+                <ul class="features-list">
+                    <li>
+                        <span class="feature-name">تصميم مخصص</span>
+                        <span class="feature-desc">للشاشات الكبيرة والتلفزيونات</span>
+                    </li>
+                    <li>
+                        <span class="feature-name">الباقات الرياضية والترفيهية</span>
+                        <span class="feature-desc">جميع المحتويات في مكان واحد</span>
+                    </li>
+                    <li>
+                        <span class="feature-name">التحكم عن بعد</span>
+                        <span class="feature-desc">دعم كامل للريموت</span>
+                    </li>
+                    <li>
+                        <span class="feature-name">تنقل سلس</span>
+                        <span class="feature-desc">باستخدام الأسهم</span>
+                    </li>
+                    <li>
+                        <span class="feature-name">ألوان زاهية</span>
+                        <span class="feature-desc">محسنة للشاشات الكبيرة</span>
+                    </li>
+                    <li>
+                        <span class="feature-name">دقة 4K و HDR</span>
+                        <span class="feature-desc">دعم خاص للعرض عالي الجودة</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    
+    <script>
+        // دعم التحكم عن بعد باستخدام لوحة المفاتيح
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.device-card');
+            let currentFocus = 0;
+            
+            // التركيز على البطاقة الأولى عند التحميل
+            if (cards.length > 0) {
+                cards[0].focus();
+            }
+            
+            // التعامل مع أحداث لوحة المفاتيح
+            document.addEventListener('keydown', function(e) {
+                const activeElement = document.activeElement;
+                
+                switch(e.key) {
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        currentFocus = (currentFocus - 1 + cards.length) % cards.length;
+                        cards[currentFocus].focus();
+                        break;
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        currentFocus = (currentFocus + 1) % cards.length;
+                        cards[currentFocus].focus();
+                        break;
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        currentFocus = (currentFocus - 1 + cards.length) % cards.length;
+                        cards[currentFocus].focus();
+                        break;
+                    case 'ArrowRight':
+                        e.preventDefault();
+                        currentFocus = (currentFocus + 1) % cards.length;
+                        cards[currentFocus].focus();
+                        break;
+                    case 'Enter':
+                    case ' ':
+                        if (activeElement.classList.contains('device-card')) {
+                            const href = activeElement.getAttribute('data-href');
+                            if (href) {
+                                window.location.href = href;
+                            }
+                        }
+                        break;
+                }
+            });
+            
+            // تحسين تجربة النقر للشاشات التي تعمل باللمس
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const href = this.getAttribute('data-href');
+                    if (href) {
+                        window.location.href = href;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
