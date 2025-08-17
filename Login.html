@@ -210,8 +210,6 @@
     
 }
 
-
-
 /* موجة إضافية لمزيد من العمق */
 .wave::after {
     content: '';
@@ -290,9 +288,7 @@
       <img src="https://up6.cc/2025/08/175516875548061.png" alt="App Logo" class="logo">
     </div>
     
-
-    
-    <form action="/verify" method="post">
+    <form id="activationForm">
       <input id="codeInput" class="input-field" type="text" name="code" placeholder="Enter activation code" maxlength="12" tabindex="1" aria-label="رمز التفعيل" inputmode="numeric" pattern="[0-9]*" required autofocus />
       <button id="submitBtn" class="btn" type="submit" tabindex="2">تفعيل الحساب</button>
     </form>
@@ -474,187 +470,193 @@
         "retina_detect": true
       });
 
+      // تعيين الكود الصحيح هنا
+      const VALID_CODE = "123456789";
+      const ACTIVATION_KEY = "account_activated";
+      const CODE_KEY = "activation_code";
       
+      let removeTrapFocusListener = null;
 
-    let removeTrapFocusListener = null;
+      function trapFocus(element) {
+        const focusableSelectors = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]';
+        const focusableElements = element.querySelectorAll(focusableSelectors);
+        if (focusableElements.length === 0) return;
 
-    function trapFocus(element) {
-      const focusableSelectors = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]';
-      const focusableElements = element.querySelectorAll(focusableSelectors);
-      if (focusableElements.length === 0) return;
+        const firstFocusable = focusableElements[0];
+        const lastFocusable = focusableElements[focusableElements.length - 1];
 
-      const firstFocusable = focusableElements[0];
-      const lastFocusable = focusableElements[focusableElements.length - 1];
-
-      function handleFocus(event) {
-        if (event.key === 'Tab') {
-          if (event.shiftKey) {
-            if (document.activeElement === firstFocusable) {
-              event.preventDefault();
-              lastFocusable.focus();
-            }
-          } else {
-            if (document.activeElement === lastFocusable) {
-              event.preventDefault();
-              firstFocusable.focus();
+        function handleFocus(event) {
+          if (event.key === 'Tab') {
+            if (event.shiftKey) {
+              if (document.activeElement === firstFocusable) {
+                event.preventDefault();
+                lastFocusable.focus();
+              }
+            } else {
+              if (document.activeElement === lastFocusable) {
+                event.preventDefault();
+                firstFocusable.focus();
+              }
             }
           }
         }
+
+        element.addEventListener('keydown', handleFocus);
+
+        return () => {
+          element.removeEventListener('keydown', handleFocus);
+        };
       }
 
-      element.addEventListener('keydown', handleFocus);
+      function showModal(message, onConfirm, onCancel, showCancel = true, type = 'success') {
+        const overlay = document.getElementById('modalOverlay');
+        const modalBox = document.getElementById('modalBox');
+        const modalMsg = document.getElementById('modalDesc');
+        const confirmBtn = document.getElementById('modalConfirmBtn');
+        const cancelBtn = document.getElementById('modalCancelBtn');
+        const buttonsContainer = document.getElementById('modalButtons');
 
-      return () => {
-        element.removeEventListener('keydown', handleFocus);
-      };
-    }
+        modalMsg.textContent = message;
+        overlay.style.display = 'flex';
 
-    function showModal(message, onConfirm, onCancel, showCancel = true, type = 'success') {
-      const overlay = document.getElementById('modalOverlay');
-      const modalBox = document.getElementById('modalBox');
-      const modalMsg = document.getElementById('modalDesc');
-      const confirmBtn = document.getElementById('modalConfirmBtn');
-      const cancelBtn = document.getElementById('modalCancelBtn');
-      const buttonsContainer = document.getElementById('modalButtons');
+        modalBox.classList.remove('success', 'error');
 
-      modalMsg.textContent = message;
-      overlay.style.display = 'flex';
-
-      modalBox.classList.remove('success', 'error');
-
-      if (type === 'success') {
-        modalBox.classList.add('success');
-        confirmBtn.style.display = 'inline-block';
-        cancelBtn.style.display = 'none';
-        buttonsContainer.style.justifyContent = 'center';
-      } else if (type === 'error') {
-        modalBox.classList.add('error');
-        confirmBtn.style.display = 'none';
-        cancelBtn.style.display = 'inline-block';
-        buttonsContainer.style.justifyContent = 'center';
-      }
-
-      if (removeTrapFocusListener) removeTrapFocusListener();
-      removeTrapFocusListener = trapFocus(modalBox);
-
-      if (type === 'success') {
-        confirmBtn.focus();
-      } else if (type === 'error') {
-        cancelBtn.focus();
-      }
-
-      confirmBtn.onclick = () => {
-        overlay.style.display = 'none';
-        if (removeTrapFocusListener) removeTrapFocusListener();
-        if (typeof onConfirm === 'function') onConfirm();
-      };
-
-      cancelBtn.onclick = () => {
-        overlay.style.display = 'none';
-        if (removeTrapFocusListener) removeTrapFocusListener();
-        if (typeof onCancel === 'function') onCancel();
-      };
-    }
-
-    document.getElementById('modalBox').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        const activeElement = document.activeElement;
-        if (activeElement === document.getElementById('modalConfirmBtn') ||
-            activeElement === document.getElementById('modalCancelBtn')) {
-          activeElement.click();
-          e.preventDefault();
+        if (type === 'success') {
+          modalBox.classList.add('success');
+          confirmBtn.style.display = 'inline-block';
+          cancelBtn.style.display = 'none';
+          buttonsContainer.style.justifyContent = 'center';
+        } else if (type === 'error') {
+          modalBox.classList.add('error');
+          confirmBtn.style.display = 'none';
+          cancelBtn.style.display = 'inline-block';
+          buttonsContainer.style.justifyContent = 'center';
         }
-      }
-    });
 
-    const validCode = "123456789";
+        if (removeTrapFocusListener) removeTrapFocusListener();
+        removeTrapFocusListener = trapFocus(modalBox);
 
-    function saveActivation() {
-      localStorage.setItem('activated', 'true');
-      localStorage.setItem('validCode', validCode);
-    }
-
-    function isActivated() {
-      return localStorage.getItem('activated') === 'true' &&
-             localStorage.getItem('validCode') === validCode;
-    }
-
-    window.onload = () => {
-      const savedCode = localStorage.getItem('validCode');
-      if (savedCode !== validCode) {
-        localStorage.removeItem('activated');
-        localStorage.setItem('validCode', validCode);
-      }
-      if (isActivated()) {
-        window.location.href = 'go:home';
-      }
-      focusElement(currentFocusIndex);
-    };
-
-    document.querySelector('form').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const codeInput = this.code;
-      const inputCode = codeInput.value.trim();
-      
-      codeInput.blur();
-
-      if (isActivated()) {
-        window.location.href = 'go:home';
-        return;
-      }
-
-      if (inputCode === validCode) {
-        saveActivation();
-        showModal('تم تفعيل حسابك بنجاح', () => {
-          window.location.href = 'go:home';
-        }, null, false, 'success');
-      } else {
-        showModal('كود التفعيل غير صحيح ، يرجى إعادة المحاولة مرة أخرى', null, () => {
-          codeInput.value = '';
-          codeInput.focus();
-        }, true, 'error');
-      }
-    });
-
-    const focusableElements = ['codeInput', 'submitBtn', 'downloadBtn'];
-    let currentFocusIndex = 0;
-
-    function focusElement(index) {
-      const el = document.getElementById(focusableElements[index]);
-      if (el) el.focus();
-    }
-
-    document.addEventListener('keydown', function (e) {
-      const key = e.key;
-
-      if (key === 'ArrowDown') {
-        currentFocusIndex = (currentFocusIndex + 1) % focusableElements.length;
-        focusElement(currentFocusIndex);
-        e.preventDefault();
-      } else if (key === 'ArrowUp') {
-        currentFocusIndex = (currentFocusIndex - 1 + focusableElements.length) % focusableElements.length;
-        focusElement(currentFocusIndex);
-        e.preventDefault();
-      } else if (key === 'Enter') {
-        const activeElement = document.activeElement;
-        if (activeElement && activeElement.id === 'submitBtn') {
-          activeElement.click();
-          e.preventDefault();
+        if (type === 'success') {
+          confirmBtn.focus();
+        } else if (type === 'error') {
+          cancelBtn.focus();
         }
+
+        confirmBtn.onclick = () => {
+          overlay.style.display = 'none';
+          if (removeTrapFocusListener) removeTrapFocusListener();
+          if (typeof onConfirm === 'function') onConfirm();
+        };
+
+        cancelBtn.onclick = () => {
+          overlay.style.display = 'none';
+          if (removeTrapFocusListener) removeTrapFocusListener();
+          if (typeof onCancel === 'function') onCancel();
+        };
       }
-    });
 
-    const inputField = document.getElementById('codeInput');
-    const originalPlaceholder = inputField.placeholder;
+      document.getElementById('modalBox').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const activeElement = document.activeElement;
+          if (activeElement === document.getElementById('modalConfirmBtn') ||
+              activeElement === document.getElementById('modalCancelBtn')) {
+            activeElement.click();
+            e.preventDefault();
+          }
+        }
+      });
 
-    inputField.addEventListener('focus', () => {
-      inputField.placeholder = '';
-    });
-
-    inputField.addEventListener('blur', () => {
-      if (inputField.value.trim() === '') {
-        inputField.placeholder = originalPlaceholder;
+      function saveActivation() {
+        localStorage.setItem(ACTIVATION_KEY, 'true');
+        localStorage.setItem(CODE_KEY, VALID_CODE);
       }
+
+      function isActivated() {
+        return localStorage.getItem(ACTIVATION_KEY) === 'true' &&
+               localStorage.getItem(CODE_KEY) === VALID_CODE;
+      }
+
+      function redirectToHome() {
+        // يمكنك تغيير هذا الرابط حسب احتياجاتك
+        window.location.href = 'home.html';
+      }
+
+      // التحقق من التفعيل عند تحميل الصفحة
+      window.onload = () => {
+        if (isActivated()) {
+          redirectToHome();
+        }
+        
+        const inputField = document.getElementById('codeInput');
+        inputField.focus();
+      };
+
+      // التعامل مع إرسال النموذج
+      document.getElementById('activationForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const codeInput = document.getElementById('codeInput');
+        const inputCode = codeInput.value.trim();
+        
+        if (!inputCode) {
+          showModal('الرجاء إدخال كود التفعيل', null, () => {
+            codeInput.focus();
+          }, true, 'error');
+          return;
+        }
+
+        if (inputCode === VALID_CODE) {
+          saveActivation();
+          showModal('تم تفعيل حسابك بنجاح!', redirectToHome, null, false, 'success');
+        } else {
+          showModal('كود التفعيل غير صحيح، يرجى المحاولة مرة أخرى', null, () => {
+            codeInput.value = '';
+            codeInput.focus();
+          }, true, 'error');
+        }
+      });
+
+      // إدارة التنقل بين العناصر باستخدام لوحة المفاتيح
+      const focusableElements = ['codeInput', 'submitBtn', 'downloadBtn'];
+      let currentFocusIndex = 0;
+
+      function focusElement(index) {
+        const el = document.getElementById(focusableElements[index]);
+        if (el) el.focus();
+      }
+
+      document.addEventListener('keydown', function (e) {
+        const key = e.key;
+
+        if (key === 'ArrowDown' || key === 'ArrowRight') {
+          currentFocusIndex = (currentFocusIndex + 1) % focusableElements.length;
+          focusElement(currentFocusIndex);
+          e.preventDefault();
+        } else if (key === 'ArrowUp' || key === 'ArrowLeft') {
+          currentFocusIndex = (currentFocusIndex - 1 + focusableElements.length) % focusableElements.length;
+          focusElement(currentFocusIndex);
+          e.preventDefault();
+        } else if (key === 'Enter') {
+          const activeElement = document.activeElement;
+          if (activeElement && activeElement.id === 'submitBtn') {
+            activeElement.click();
+            e.preventDefault();
+          }
+        }
+      });
+
+      // إدارة placeholder لحقل الإدخال
+      const inputField = document.getElementById('codeInput');
+      const originalPlaceholder = inputField.placeholder;
+
+      inputField.addEventListener('focus', () => {
+        inputField.placeholder = '';
+      });
+
+      inputField.addEventListener('blur', () => {
+        if (inputField.value.trim() === '') {
+          inputField.placeholder = originalPlaceholder;
+        }
+      });
     });
   </script>
 </body>
